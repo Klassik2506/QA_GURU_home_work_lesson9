@@ -1,27 +1,15 @@
+import datetime
+
 from demoqa_tests.pages.registration_page import RegistrationPage
+from demoqa_tests.data.users import User, UserHobby, UserGender
 
 
 def test_form_filling(browser_actions):
     registration_page = RegistrationPage()
+    tested_user = User(first_name='Nikolai', last_name='Danilov', email='Danilov@gmail.com', gender=UserGender.Male.name,
+                       mobile='9270535555', date_of_birth=datetime.date(1991, 6, 25), subjects=['Chemistry', 'Arts'],
+                       hobby=UserHobby.Music.name, picture='test_photo.jpg', address='Saratov',
+                       state='NCR', city='Delhi')
     registration_page.open()
-    (
-        registration_page
-        .fill_first_name('Nikolai')
-        .fill_last_name('Danilov')
-        .fill_email('Danilov@gmail.com')
-        .select_gender('Male')
-        .fill_mobile('9270535555')
-        .fill_date_of_birth('25', '06', '1991')
-        .select_subjects(['Chemistry', 'Arts'])
-        .select_hobby('Music')
-        .upload_picture('test_photo.jpg')
-        .fill_address('Saratov')
-        .select_state('NCR')
-        .select_city('Delhi')
-        .submit_data()
-    )
-    registration_page.should_have_title('Thanks for submitting the form')
-    registration_page.modal_should_have_registered_user_info('Nikolai Danilov', 'Danilov@gmail.com', 'Male', '9270535555',
-                                                       '25 June,1991', 'Chemistry, Arts', 'Music', 'test_photo.jpg',
-                                                       'Saratov', 'NCR Delhi')
-    registration_page.close_modal()
+    registration_page.register(tested_user)
+    registration_page.should_have_registered(tested_user)
